@@ -1,10 +1,12 @@
 #include "tcp.h"
 
 int main(){
+    xmlKeepBlanksDefault(0);
+    xmlIndentTreeOutput = 1;
     xmlDocPtr doc = xmlNewDoc(BAD_CAST"1.0");
     xmlNodePtr root_node = xmlNewNode(NULL,BAD_CAST"Account");
     xmlDocSetRootElement(doc,root_node);
-    int n,i,j,k;
+    int n,i;
     char num[MAXLINE],user[MAXLINE],pass[MAXLINE];
     printf("how many user do you want create?\n");
     scanf("%d",&n);
@@ -16,7 +18,7 @@ int main(){
 
         printf("please input the %dth's password:",i);
         scanf("%s",pass);
-        sprintf(num, "%d", i);
+        sprintf(num, "user-%d", i);
         xmlNodePtr node = xmlNewNode(NULL,BAD_CAST(num));   //增加用户子节点
         xmlAddChild(root_node,node);
         //为用户子节点加属性
@@ -26,7 +28,7 @@ int main(){
 
     }
     printf("begin s\n");
-    int ret = xmlSaveFile("account.xml",doc);
+    int ret = xmlSaveFormatFile("account.xml",doc,1);
     if(ret != -1){
              printf("A xml doc is created;");
         }
