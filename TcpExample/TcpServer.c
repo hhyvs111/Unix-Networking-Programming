@@ -8,10 +8,9 @@
 
 int readXML(char*,char*);  //函数声明
 
-int g_nowClient ;
+int g_nowClient ;    //客户端ID
 char *g_sess[1024];   //暂且支持1024个客户端
 int shmid;    //共享内存，实现互斥访问XML文件
-/*int xml_available = 1;   //0不可读，1可读*/
 sem_t *mysem;       //Posix信号量
 
 int main(int argc, char **argv)
@@ -133,7 +132,6 @@ void function(int sockfd)
         if((n = recv(sockfd,recvbuff,MAXLINE,0)) <= 0)
         {
             printf("read error!\n");
-            /*continue;*/
             close(sockfd);
             exit(1);
         }
@@ -165,7 +163,7 @@ void function(int sockfd)
             //需要通过信号量 共享内存互斥访问XML文件
             mysem = shmat(shmid,0,0);
             sem_wait(mysem);
-            if(readXML(user,pass))
+            if(readXML(user,pass) == 1)
             {
                 g_sess[g_nowClient] = genRandomString(10);   //生成长度为10的字符串sess
                 printf("the sess is : %s",g_sess[g_nowClient]);
@@ -188,7 +186,6 @@ void function(int sockfd)
                     exit(1);
                 else if (ret > 0)
                     printf("send %d bit\n",ret);
-                /*Writen(sockfd,msg,strlen(msg));*/
             }
             mysem = shmat(shmid,0,0);
             sem_post(mysem);
@@ -221,7 +218,6 @@ void function(int sockfd)
                         exit(1);
                     else if (ret > 0)
                         printf("send %d bit\n",ret);
-                    /*Writen(sockfd,msg,strlen(msg));*/
                     continue;
                 }
                 else
@@ -235,13 +231,11 @@ void function(int sockfd)
                         memset(msg,0,MAXLINE);
                         strcpy(msg,"TIME=");
                         strcat(msg,ctime(&timep));
-                        /*snprintf(msg,sizeof(msg),"%.24s\r\n",ctime(&timep));*/
                         int ret = send(sockfd,msg,strlen(msg),0);
                         if(ret < 0)
                             exit(1);
                         else if (ret > 0)
                             printf("send %d bit\n",ret);
-                        /*Writen(sockfd,msg,strlen(msg));*/
                     }
                     //退出子进程
                     else if(!strcmp(command,"QUIT"))
@@ -249,7 +243,6 @@ void function(int sockfd)
                         memset(msg,0,MAXLINE);
                         strcpy(msg,"QUIT=");
                         strcat(msg,g_sess[g_nowClient]);
-                        /*snprintf(msg,sizeof(msg),"%.24s\r\n",ctime(&timep));*/
                         int ret = send(sockfd,msg,strlen(msg),0);
                         if(ret < 0)
                             exit(1);
