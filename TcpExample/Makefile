@@ -1,5 +1,5 @@
 GCC = gcc 
-CFLAGS = -Wall  -g
+CFLAGS =   -g
 LIBXML2_ROOT = /usr/include/libxml2
 LIBTHREAD = -lpthread
 LIBXML2 = -I $(LIBXML2_ROOT)
@@ -10,7 +10,7 @@ MY_LIB = -lxml2
 all : Server Client ProduceXML 
 
 
-Server : TcpServer.o readXML.o 
+Server : TcpServer.c readXML.c 
 	$(GCC) $(CFLAGS) -o $@ $^ $(MY_LIB) $(LIBXML2)  $(LIBTHREAD)
 
 Client : TcpClient.o 
@@ -20,14 +20,14 @@ ProduceXML : produceXML.o
 	$(GCC) $(CFLAGS) -o $@  $^ $(MY_LIB) $(LIBXML2) 
 
 produceXML.o : produceXML.c
-	$(GCC) -c $^ $(MY_LIB) $(LIBXML2)
-readXML.o : readXML.c 
-	$(GCC) -c $^ $(MY_LIB) $(LIBXML2)
+	$(GCC)  $(CFLAGS) -c $^ $(MY_LIB) $(LIBXML2)
+#readXML.o : readXML.c 
+	#$(GCC)  $(CFLAGS) -c $^ $(MY_LIB) $(LIBXML2)
 
-TcpServer.o : TcpServer.c readXML.c  
-	$(GCC) -c $^  $(MY_LIB) $(LIBXML2)  
+#TcpServer.o : TcpServer.c readXML.c  
+   # $(GCC)  $(CFLAGS) -c $^  $(MY_LIB) $(LIBXML2)  
 
 TcpClient.o : TcpClient.c 
-	$(GCC) -c $^ $(MY_LIB) $(LIBXML2)
+	$(GCC)  $(CFLAGS) -c TcpClient.c $(MY_LIB) $(LIBXML2)
 
 

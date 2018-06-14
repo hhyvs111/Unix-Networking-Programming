@@ -187,7 +187,7 @@ void read_msg(int sockfd)
         memset(reply,0,MAXLINE);
         if(( n = recv(sockfd,reply,MAXLINE,0)) <= 0)    //这里写了个BUG，测试半天没发现，多写了个=，变成 n == recv了，怪不得一直出错
         {
-            close(sock);   //如果不加这一句可能会出现CLOSE_WAIT状态
+            close(sockfd);   //如果不加这一句可能会出现CLOSE_WAIT状态
             printf("socket error\n");
             exit(1);
         }
